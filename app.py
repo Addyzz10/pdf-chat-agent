@@ -36,9 +36,7 @@ def load_embedding_model():
 
 @st.cache_resource
 def get_chroma_client():
-    return chromadb.PersistentClient(
-        path="./chroma_db"
-    )
+    return chromadb.Client()
 
 
 embedding_model = load_embedding_model()
