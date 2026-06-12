@@ -2,6 +2,5 @@ streamlit
 pypdf
 sentence-transformers
 chromadb
-ollama
+groq
 torch
-transformers
