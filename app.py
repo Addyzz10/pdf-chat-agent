@@ -55,14 +55,14 @@ if uploaded_file:
 
     reader = PdfReader(uploaded_file)
 
-    text = ""
+    full_text = ""
 
     for page in reader.pages:
 
         page_text = page.extract_text()
 
         if page_text:
-            text += page_text + "\n"
+            full_text += page_text + "\n"
 
     st.success("PDF Loaded Successfully ✅")
 
@@ -84,19 +84,20 @@ if uploaded_file:
 
         st.session_state.current_pdf = collection_name
 
-        chunk_size = 1000
-        overlap = 200
+        chunk_size = 800
+        overlap = 150
 
         chunks = []
 
         for i in range(
             0,
-            len(text),
+            len(full_text),
             chunk_size - overlap
         ):
-            chunks.append(
-                text[i:i + chunk_size]
-            )
+            chunk = full_text[i:i + chunk_size]
+
+            if chunk.strip():
+                chunks.append(chunk)
 
         with st.spinner(
             "Creating embeddings..."
@@ -104,8 +105,8 @@ if uploaded_file:
 
             embeddings = embedding_model.encode(
                 chunks,
-                show_progress_bar=True,
-                batch_size=32
+                batch_size=32,
+                show_progress_bar=True
             ).tolist()
 
         try:
@@ -142,11 +143,9 @@ if uploaded_file:
             collection_name
         )
 
-        query_embedding = (
-            embedding_model.encode(
-                [question]
-            ).tolist()[0]
-        )
+        query_embedding = embedding_model.encode(
+            [question]
+        ).tolist()[0]
 
         results = collection.query(
             query_embeddings=[
@@ -155,8 +154,10 @@ if uploaded_file:
             n_results=5
         )
 
+        retrieved_chunks = results["documents"][0]
+
         context = "\n\n".join(
-            results["documents"][0]
+            retrieved_chunks
         )
 
         with st.expander(
@@ -165,19 +166,20 @@ if uploaded_file:
             st.write(context)
 
         prompt = f"""
-You are a PDF assistant.
+You are a PDF Question Answering Assistant.
 
-Answer ONLY using the provided context.
+Answer ONLY using the information found inside the provided context.
 
-If the answer is not present in the context, reply exactly:
+If the answer is not explicitly present in the context, respond EXACTLY with:
 
 I could not find that information in the PDF.
 
 Rules:
-1. Do not hallucinate.
-2. Use only the context.
-3. Preserve code formatting.
-4. Use markdown code blocks for code.
+- Never make up information.
+- Never use outside knowledge.
+- If names, numbers, marks, code, examples, chapters, or definitions exist in the context, answer directly.
+- Preserve code formatting.
+- Use markdown code blocks when showing code.
 
 Context:
 {context}
@@ -211,5 +213,4 @@ Answer:
         )
 
         st.subheader("Answer")
-
         st.markdown(answer)
