@@ -2,6 +2,10 @@
 
 A Retrieval-Augmented Generation (RAG) application that allows users to upload PDF documents and ask questions about their content.
 
+# Live Demo
+
+🔗 https://pdf-chat-agent-addyzz10.streamlit.app/
+
 # Features
 
 * Upload PDF documents
@@ -69,3 +73,4 @@ GROQ_API_KEY="your_groq_api_key"
 # Deployment
 
 The application can be deployed directly on Streamlit Community Cloud.
+
