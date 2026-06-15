@@ -1,10 +1,10 @@
-# PDF Chat Agent – Complete Development Documentation
+# PDF Chat Agent - Complete Development Documentation
 
 ---
 
 # 1. Project Overview
 
-## Objective
+# Objective
 
 The goal of this project was to build an AI-powered PDF Question Answering system capable of:
 
@@ -21,7 +21,7 @@ The goal of this project was to build an AI-powered PDF Question Answering syste
 
 # 2. System Architecture
 
-```text
+
 PDF Upload
     ↓
 Text Extraction (pypdf)
@@ -47,15 +47,14 @@ Prompt Construction
 Groq Llama 3.3
     ↓
 Final Answer
-```
 
 ---
 
 # 3. Technology Stack
 
-## Frontend
+# Frontend
 
-### Streamlit
+Streamlit
 
 Used for:
 
@@ -67,9 +66,9 @@ Used for:
 
 ---
 
-## PDF Processing
+# PDF Processing
 
-### pypdf
+pypdf
 
 Used for:
 
@@ -78,15 +77,14 @@ Used for:
 
 ---
 
-## Embedding Model
+# Embedding Model
 
-### Sentence Transformers
+ Sentence Transformers
 
 Model Used:
 
-```text
 all-MiniLM-L6-v2
-```
+
 
 Purpose:
 
@@ -96,9 +94,9 @@ Purpose:
 
 ---
 
-## Vector Database
+# Vector Database
 
-### ChromaDB
+ChromaDB
 
 Used for:
 
@@ -108,23 +106,21 @@ Used for:
 
 ---
 
-## Large Language Model
+# Large Language Model
 
-### Initial Plan
+Initial Plan
 
-```text
 Ollama
 Qwen 2.5
-```
 
-### Final Implementation
 
-```text
+# Final Implementation
+
 Groq API
 Llama 3.3 70B Versatile
-```
 
-### Reason for Migration
+
+# Reason for Migration
 
 The project was initially designed using Ollama and Qwen 2.5 as a locally hosted LLM.
 
@@ -147,7 +143,6 @@ Benefits:
 
 # 4. Project Structure
 
-```text
 pdf-chat-agent/
 │
 ├── app.py
@@ -160,33 +155,29 @@ pdf-chat-agent/
 │   └── secrets.toml
 │
 └── chroma_db/
-```
 
 ---
 
 # 5. Environment Setup
 
-## Create Virtual Environment
+Create Virtual Environment
 
-```bash
 python -m venv venv
-```
 
-## Activate Environment
 
-```bash
+# Activate Environment
+
 venv\Scripts\activate
-```
 
-## Install Dependencies
 
-```bash
+# Install Dependencies
+
+
 pip install streamlit
 pip install pypdf
 pip install sentence-transformers
 pip install chromadb
 pip install groq
-```
 
 ---
 
@@ -194,18 +185,15 @@ pip install groq
 
 Configured application settings:
 
-```python
+
 st.set_page_config(
     page_title="PDF Chat Agent",
     page_icon="📄"
 )
-```
 
 Application title:
 
-```python
 st.title("📄 PDF Chat Agent")
-```
 
 ---
 
@@ -213,12 +201,10 @@ st.title("📄 PDF Chat Agent")
 
 Implemented PDF upload using:
 
-```python
 uploaded_file = st.file_uploader(
     "Upload PDF",
     type=["pdf"]
 )
-```
 
 Purpose:
 
@@ -231,34 +217,31 @@ Purpose:
 
 Created a PDF reader:
 
-```python
 reader = PdfReader(uploaded_file)
-```
+
 
 Looped through all pages:
 
-```python
+
 for page in reader.pages:
-```
+
 
 Extracted page text:
 
-```python
+
 page.extract_text()
-```
+
 
 Stored extracted content:
 
-```python
+
 full_text += page_text
-```
+
 
 Validation:
 
-```python
 if not full_text.strip():
     st.error(...)
-```
 
 Purpose:
 
@@ -268,30 +251,30 @@ Prevent processing PDFs with no readable text.
 
 # 9. Text Chunking
 
-## Problem
+# Problem
 
 Large PDFs cannot be efficiently processed as a single block of text.
 
-## Solution
+# Solution
 
 Split the document into overlapping chunks.
 
 Implementation:
 
-```python
+
 chunk_size = 800
 overlap = 150
-```
+
 
 Chunk generation:
 
-```python
+
 for i in range(
     0,
     len(full_text),
     chunk_size - overlap
 )
-```
+
 
 Benefits:
 
@@ -305,19 +288,19 @@ Benefits:
 
 Loaded embedding model:
 
-```python
+
 SentenceTransformer(
     "all-MiniLM-L6-v2"
 )
-```
+
 
 Generated embeddings:
 
-```python
+
 embedding_model.encode(
     chunks
 )
-```
+
 
 Purpose:
 
@@ -329,15 +312,15 @@ Convert text into vector representations that capture semantic meaning.
 
 Created ChromaDB client:
 
-```python
+
 chromadb.Client()
-```
+
 
 Created collection:
 
-```python
+
 create_collection()
-```
+
 
 Stored:
 
@@ -355,28 +338,27 @@ Persist vectorized document data for retrieval.
 
 Example Question:
 
-```text
 Who scored highest?
-```
+
 
 Question embedding:
 
-```python
+
 embedding_model.encode(
     [question]
 )
-```
+
 
 Vector search:
 
-```python
+
 collection.query(
     query_embeddings=[
         query_embedding
     ],
     n_results=5
 )
-```
+
 
 Result:
 
@@ -388,11 +370,10 @@ Returns the most semantically relevant chunks from the PDF.
 
 Combined retrieved chunks:
 
-```python
 context = "\n\n".join(
     retrieved_chunks
 )
-```
+
 
 Purpose:
 
@@ -421,21 +402,19 @@ Benefits:
 
 Created Groq client:
 
-```python
+
 client_groq = Groq(
     api_key=st.secrets["GROQ_API_KEY"]
 )
-```
+
 
 Stored secret key in:
 
-```toml
 .streamlit/secrets.toml
-```
 
-```toml
+
 GROQ_API_KEY="YOUR_API_KEY"
-```
+
 
 ---
 
@@ -452,15 +431,15 @@ Prompt was designed to enforce:
 
 Fallback response:
 
-```text
+
 I could not find that information in the PDF.
-```
+
 
 ---
 
 # 17. Challenge 1: Chapter Formatting
 
-## Issue
+# Issue
 
 Chapter requests returned:
 
@@ -468,11 +447,11 @@ Chapter requests returned:
 * Broken formatting
 * Lost code blocks
 
-## Root Cause
+# Root Cause
 
 Prompt did not explicitly preserve formatting.
 
-## Solution
+# Solution
 
 Added instructions:
 
@@ -481,7 +460,7 @@ Added instructions:
 * Use code blocks
 * Display complete chapter structure
 
-## Result
+# Result
 
 Chapters display correctly with:
 
@@ -495,19 +474,18 @@ Chapters display correctly with:
 
 # 18. Challenge 2: Chat History Overflow
 
-## Issue
+# Issue
 
 Large chapter responses filled the chat history.
 
-## Solution
+# Solution
 
 Store shortened answers:
 
-```python
-answer[:150]
-```
 
-## Result
+answer[:150]
+
+# Result
 
 Cleaner interface and better readability.
 
@@ -515,21 +493,19 @@ Cleaner interface and better readability.
 
 # 19. Challenge 3: Repeated PDF Processing
 
-## Issue
+# Issue
 
 PDF embeddings were recreated on every Streamlit rerun.
 
-## Solution
+# Solution
 
 Implemented Session State.
 
 Stored:
 
-```python
 current_pdf
-```
 
-## Result
+# Result
 
 PDF is processed only once per upload.
 
@@ -539,9 +515,7 @@ PDF is processed only once per upload.
 
 Created:
 
-```python
 if "chat_history" not in st.session_state:
-```
 
 Used for:
 
@@ -559,11 +533,9 @@ Benefits:
 
 Implemented:
 
-```python
 st.expander(
     "Retrieved Chunks"
 )
-```
 
 Purpose:
 
@@ -593,34 +565,33 @@ groq==1.4.0
 
 Repository:
 
-```text
+
 pdf-chat-agent
-```
+
 
 Initialization:
 
-```bash
 git init
-```
+
 
 Connect Remote:
 
-```bash
+
 git remote add origin <repository-url>
-```
+
 
 Commit:
 
-```bash
+
 git add .
 git commit -m "Initial commit"
-```
+
 
 Push:
 
-```bash
+
 git push origin main
-```
+
 
 ---
 
@@ -628,35 +599,35 @@ git push origin main
 
 Check status:
 
-```bash
+
 git status
-```
+
 
 View changes:
 
-```bash
+
 git diff
-```
+
 
 Commit updates:
 
-```bash
+
 git add app.py
 git commit -m "Update PDF chat agent"
 git push origin main
-```
+
 
 Verification:
 
-```bash
+
 git status
-```
+
 
 Output:
 
-```text
+
 working tree clean
-```
+
 
 ---
 
@@ -673,9 +644,9 @@ Configured:
 
 Added secret:
 
-```toml
+
 GROQ_API_KEY
-```
+
 
 Deployment completed successfully.
 
@@ -683,25 +654,19 @@ Deployment completed successfully.
 
 # 26. Testing
 
-## Test Case 1 – Semantic Retrieval
+# Test Case 1 - Semantic Retrieval
 
 Question:
 
-```text
 Who scored highest?
-```
 
 Expected Output:
 
-```text
 Riya scored the highest with 95 marks.
-```
 
 Actual Output:
 
-```text
 Riya scored the highest with 95 marks.
-```
 
 Status:
 
@@ -713,21 +678,15 @@ Status:
 
 Question:
 
-```text
 What marks did Aman score?
-```
 
 Expected Output:
 
-```text
 80
-```
 
 Actual Output:
 
-```text
 80
-```
 
 Status:
 
@@ -735,13 +694,11 @@ Status:
 
 ---
 
-## Test Case 3 – Chapter Retrieval
+# Test Case 3 – Chapter Retrieval
 
 Question:
 
-```text
 Chapter 5
-```
 
 Expected Output:
 
@@ -767,21 +724,15 @@ Status:
 
 Question:
 
-```text
 What is the capital of France?
-```
 
 Expected Output:
 
-```text
 I could not find that information in the PDF.
-```
 
 Actual Output:
 
-```text
 I could not find that information in the PDF.
-```
 
 Status:
 
@@ -807,7 +758,7 @@ Potential improvements:
 
 # 28. Concepts Learned
 
-## AI & Machine Learning
+# AI & Machine Learning
 
 * Embeddings
 * Semantic Search
@@ -815,23 +766,23 @@ Potential improvements:
 * Retrieval-Augmented Generation (RAG)
 * Prompt Engineering
 
-## Backend Development
+# Backend Development
 
 * PDF Parsing
 * Text Processing
 * Session State Management
 
-## Databases
+# Databases
 
 * ChromaDB
 * Vector Storage
 
-## LLM Integration
+# LLM Integration
 
 * Groq API
 * Llama 3.3 70B Versatile
 
-## Deployment
+# Deployment
 
 * Git
 * GitHub

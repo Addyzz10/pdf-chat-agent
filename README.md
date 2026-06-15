@@ -2,7 +2,7 @@
 
 A Retrieval-Augmented Generation (RAG) application that allows users to upload PDF documents and ask questions about their content.
 
-## Features
+# Features
 
 * Upload PDF documents
 * Automatic text extraction
@@ -13,7 +13,7 @@ A Retrieval-Augmented Generation (RAG) application that allows users to upload P
 * Groq Llama 3.3 integration
 * ChromaDB vector storage
 
-## Tech Stack
+# Tech Stack
 
 * Streamlit
 * PyPDF
@@ -22,7 +22,7 @@ A Retrieval-Augmented Generation (RAG) application that allows users to upload P
 * Groq API
 * Llama 3.3 70B Versatile
 
-## How It Works
+# How It Works
 
 1. Upload a PDF file.
 2. Text is extracted from the document.
@@ -33,26 +33,39 @@ A Retrieval-Augmented Generation (RAG) application that allows users to upload P
 7. Relevant chunks are retrieved.
 8. Groq Llama 3.3 generates answers using only the retrieved context.
 
-## Installation
+PDF
+ ↓
+Text Extraction (PyPDF)
+ ↓
+Chunking
+ ↓
+Embeddings (Sentence Transformers)
+ ↓
+ChromaDB Vector Store
+ ↓
+Semantic Retrieval
+ ↓
+Groq Llama 3.3
+ ↓
+Answer
 
-```bash
+# Installation
+
 pip install -r requirements.txt
-```
 
-## Run
 
-```bash
+# Run
+
+
 streamlit run app.py
-```
 
-## Environment Variables
+
+# Environment Variables
 
 Create `.streamlit/secrets.toml`
 
-```toml
 GROQ_API_KEY="your_groq_api_key"
-```
 
-## Deployment
+# Deployment
 
 The application can be deployed directly on Streamlit Community Cloud.
